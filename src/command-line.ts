@@ -5,6 +5,11 @@ import { ElectronVersions } from './versions';
 import { Fiddle, FiddleFactory } from './fiddle';
 import { Runner } from './runner';
 
+/**
+ * Function handles command-line arguments, creates instances of necessary objects and
+ * executes specific commands based on the arguments provided.
+ * It logs debug information and exits the process if invalid parameters are detected.
+ */
 export async function runFromCommandLine(argv: string[]): Promise<void> {
   const d = debug('fiddle-core:runFromCommandLine');
 

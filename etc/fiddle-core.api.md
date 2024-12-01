@@ -13,112 +13,77 @@ import { Writable } from 'stream';
 // @public
 export class BaseVersions implements Versions {
     constructor(versions: unknown);
-    // (undocumented)
     getReleaseInfo(ver: SemOrStr): ReleaseInfo | undefined;
-    // (undocumented)
     inMajor(major: number): SemVer[];
-    // (undocumented)
     inRange(a: SemOrStr, b: SemOrStr): SemVer[];
-    // (undocumented)
     isVersion(ver: SemOrStr): boolean;
-    // (undocumented)
     get latest(): SemVer | undefined;
-    // (undocumented)
     get latestStable(): SemVer | undefined;
-    // (undocumented)
     get obsoleteMajors(): number[];
-    // (undocumented)
     get prereleaseMajors(): number[];
-    // (undocumented)
     protected setVersions(val: unknown): void;
-    // (undocumented)
     get stableMajors(): number[];
-    // (undocumented)
     get supportedMajors(): number[];
-    // (undocumented)
     get versions(): SemVer[];
 }
 
-// @public (undocumented)
+// @public
 export interface BisectResult {
-    // (undocumented)
     range?: [string, string];
-    // (undocumented)
     status: 'bisect_succeeded' | 'test_error' | 'system_error';
 }
 
-// @public (undocumented)
+// @public
 export function compareVersions(a: SemVer, b: SemVer): number;
 
-// @public (undocumented)
+// @public
 export const DefaultPaths: Paths;
 
-// @public (undocumented)
+// @public
 export interface ElectronBinary {
-    // (undocumented)
     alreadyExtracted: boolean;
-    // (undocumented)
     path: string;
 }
 
 // @public
 export class ElectronVersions extends BaseVersions {
-    // (undocumented)
     static create(paths?: Partial<Paths>, options?: ElectronVersionsCreateOptions): Promise<ElectronVersions>;
-    // (undocumented)
     fetch(): Promise<void>;
-    // (undocumented)
     inMajor(major: number): SemVer[];
-    // (undocumented)
     inRange(a: SemOrStr, b: SemOrStr): SemVer[];
-    // (undocumented)
     isVersion(ver: SemOrStr): boolean;
-    // (undocumented)
     get latest(): SemVer | undefined;
-    // (undocumented)
     get latestStable(): SemVer | undefined;
-    // (undocumented)
     get obsoleteMajors(): number[];
-    // (undocumented)
     get prereleaseMajors(): number[];
-    // (undocumented)
     get stableMajors(): number[];
-    // (undocumented)
     get supportedMajors(): number[];
-    // (undocumented)
     get versions(): SemVer[];
 }
 
-// @public (undocumented)
+// @public
 export interface ElectronVersionsCreateOptions {
     ignoreCache?: boolean;
     initialVersions?: unknown;
 }
 
-// @public (undocumented)
+// @public
 export class Fiddle {
-    constructor(mainPath: string, // /path/to/main.js
+    constructor(
+    mainPath: string, // /path/to/main.js
     source: string);
-    // (undocumented)
     readonly mainPath: string;
-    // (undocumented)
     remove(): Promise<void>;
-    // (undocumented)
     readonly source: string;
 }
 
-// @public (undocumented)
+// @public
 export class FiddleFactory {
     constructor(fiddles?: string);
-    // (undocumented)
     create(src: FiddleSource): Promise<Fiddle | undefined>;
-    // (undocumented)
     fromEntries(src: Iterable<[string, string]>): Promise<Fiddle>;
-    // (undocumented)
     fromFolder(source: string): Promise<Fiddle>;
-    // (undocumented)
     fromGist(gistId: string): Promise<Fiddle>;
-    // (undocumented)
     fromRepo(url: string, checkout?: string): Promise<Fiddle>;
 }
 
@@ -128,76 +93,56 @@ export type FiddleSource = Fiddle | string | Iterable<[string, string]>;
 // @public
 export class Installer extends EventEmitter {
     constructor(pathsIn?: Partial<Paths>);
-    // (undocumented)
     ensureDownloaded(version: string, opts?: Partial<InstallerParams>): Promise<ElectronBinary>;
-    // (undocumented)
     static execSubpath(platform?: string): string;
-    // (undocumented)
     static getExecPath(folder: string): string;
-    // (undocumented)
     install(version: string, opts?: Partial<InstallerParams>): Promise<string>;
     get installedVersion(): string | undefined;
     remove(version: string): Promise<void>;
-    // (undocumented)
     state(version: string): InstallState;
 }
 
-// @public (undocumented)
+// @public
 export interface InstallerParams {
-    // (undocumented)
     mirror: Mirrors;
-    // (undocumented)
     progressCallback: (progress: ProgressObject) => void;
 }
 
 // @public
 export enum InstallState {
-    // (undocumented)
     downloaded = "downloaded",
-    // (undocumented)
     downloading = "downloading",
-    // (undocumented)
     installed = "installed",
-    // (undocumented)
     installing = "installing",
-    // (undocumented)
     missing = "missing"
 }
 
-// @public (undocumented)
+// @public
 export interface InstallStateEvent {
-    // (undocumented)
     state: InstallState;
-    // (undocumented)
     version: string;
 }
 
-// @public (undocumented)
+// @public
 export interface Mirrors {
-    // (undocumented)
     electronMirror: string;
-    // (undocumented)
     electronNightlyMirror: string;
 }
 
-// @public (undocumented)
+// @public
 export interface Paths {
-    // (undocumented)
     readonly electronDownloads: string;
-    // (undocumented)
     readonly electronInstall: string;
-    // (undocumented)
     readonly fiddles: string;
-    // (undocumented)
     readonly versionsCache: string;
 }
 
-// @public (undocumented)
+// @public
 export type ProgressObject = {
     percent: number;
 };
 
-// @public (undocumented)
+// @public
 export interface ReleaseInfo {
     chrome: string;
     date: string;
@@ -211,51 +156,41 @@ export interface ReleaseInfo {
     zlib: string;
 }
 
-// @public (undocumented)
+// @public
 export function runFromCommandLine(argv: string[]): Promise<void>;
 
-// @public (undocumented)
+// @public
 export class Runner {
-    // (undocumented)
     bisect(version_a: string | SemVer, version_b: string | SemVer, fiddleIn: FiddleSource, opts?: RunnerSpawnOptions): Promise<BisectResult>;
-    // (undocumented)
     static create(opts?: {
         installer?: Installer;
         fiddleFactory?: FiddleFactory;
         paths?: Partial<Paths>;
         versions?: Versions;
     }): Promise<Runner>;
-    // (undocumented)
     static displayResult(result: TestResult): string;
-    // (undocumented)
     run(version: string | SemVer, fiddle: FiddleSource, opts?: RunnerSpawnOptions): Promise<TestResult>;
-    // (undocumented)
     spawn(versionIn: string | SemVer, fiddleIn: FiddleSource, opts?: RunnerSpawnOptions): Promise<ChildProcess>;
 }
 
-// @public (undocumented)
+// @public
 export interface RunnerOptions {
-    // (undocumented)
     args?: string[];
-    // (undocumented)
     headless?: boolean;
-    // (undocumented)
     out?: Writable;
-    // (undocumented)
     showConfig?: boolean;
 }
 
-// @public (undocumented)
+// @public
 export type RunnerSpawnOptions = SpawnOptions & RunnerOptions;
 
-// @public (undocumented)
+// @public
 export type SemOrStr = SemVer | string;
 
 export { SemVer }
 
-// @public (undocumented)
+// @public
 export interface TestResult {
-    // (undocumented)
     status: 'test_passed' | 'test_failed' | 'test_error' | 'system_error';
 }
 

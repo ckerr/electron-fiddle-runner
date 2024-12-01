@@ -7,8 +7,10 @@ export { SemVer };
 
 import { DefaultPaths, Paths } from './paths';
 
+/** Type that can be either a SemVer object or a string */
 export type SemOrStr = SemVer | string;
 
+/** Information about a release */
 export interface ReleaseInfo {
   /** Electron version */
   version: string;
@@ -70,6 +72,9 @@ export interface Versions {
   getReleaseInfo(version: SemOrStr): ReleaseInfo | undefined;
 }
 
+/**
+ * Represents the options for creating Electron versions.
+ */
 export interface ElectronVersionsCreateOptions {
   /** Initial versions to use if there is no cache. When provided, no initial fetch is done */
   initialVersions?: unknown;
@@ -78,6 +83,7 @@ export interface ElectronVersionsCreateOptions {
   ignoreCache?: boolean;
 }
 
+/** Compares two semantic version numbers */
 export function compareVersions(a: SemVer, b: SemVer): number {
   const l = a.compareMain(b);
   if (l) return l;
@@ -150,6 +156,7 @@ export class BaseVersions implements Versions {
   private readonly map = new Map<string, SemVer>();
   private readonly releaseInfo = new Map<string, ReleaseInfo>();
 
+  /** Sets the versions and their corresponding release information */
   protected setVersions(val: unknown): void {
     // release info doesn't need to be in sorted order
     this.releaseInfo.clear();
@@ -193,6 +200,7 @@ export class BaseVersions implements Versions {
     this.setVersions(versions);
   }
 
+  /** An array of major versions that have prerelease versions */
   public get prereleaseMajors(): number[] {
     const majors = new Set<number>();
     for (const ver of this.map.values()) {
@@ -206,6 +214,7 @@ export class BaseVersions implements Versions {
     return [...majors];
   }
 
+  /** An array of major versions that only have stable versions */
   public get stableMajors(): number[] {
     const majors = new Set<number>();
     for (const ver of this.map.values()) {
@@ -216,22 +225,27 @@ export class BaseVersions implements Versions {
     return [...majors];
   }
 
+  /** An array of the most recently supported major versions */
   public get supportedMajors(): number[] {
     return this.stableMajors.slice(-NUM_SUPPORTED_MAJORS);
   }
 
+  /** An array of major versions that are considered obsolete */
   public get obsoleteMajors(): number[] {
     return this.stableMajors.slice(0, -NUM_SUPPORTED_MAJORS);
   }
 
+  /** An array of all semantic versions */
   public get versions(): SemVer[] {
     return [...this.map.values()];
   }
 
+  /** Latest semantic version */
   public get latest(): SemVer | undefined {
     return this.versions.pop();
   }
 
+  /** Latest stable semantic version */
   public get latestStable(): SemVer | undefined {
     let stable: SemVer | undefined = undefined;
     for (const ver of this.map.values()) {
@@ -242,10 +256,12 @@ export class BaseVersions implements Versions {
     return stable;
   }
 
+  /** Checks if a given value is a valid version */
   public isVersion(ver: SemOrStr): boolean {
     return this.map.has(typeof ver === 'string' ? ver : ver.version);
   }
 
+  /** An array of semantic versions in a specific major version */
   public inMajor(major: number): SemVer[] {
     const versions: SemVer[] = [];
     for (const ver of this.map.values()) {
@@ -256,6 +272,7 @@ export class BaseVersions implements Versions {
     return versions;
   }
 
+  /** Gets an array of semantic versions within a specified range */
   public inRange(a: SemOrStr, b: SemOrStr): SemVer[] {
     if (typeof a !== 'string') a = a.version;
     if (typeof b !== 'string') b = b.version;
@@ -267,6 +284,7 @@ export class BaseVersions implements Versions {
     return versions.slice(first, last + 1);
   }
 
+  /** Gets the release information for a given version */
   public getReleaseInfo(ver: SemOrStr): ReleaseInfo | undefined {
     return this.releaseInfo.get(typeof ver === 'string' ? ver : ver.version);
   }
@@ -307,6 +325,7 @@ export class ElectronVersions extends BaseVersions {
     return now <= cacheTimeMs + VERSION_CACHE_TTL_MS;
   }
 
+  /** Creates an instance of the parent class. */
   public static async create(
     paths: Partial<Paths> = {},
     options: ElectronVersionsCreateOptions = {},
@@ -343,7 +362,7 @@ export class ElectronVersions extends BaseVersions {
     return new ElectronVersions(versionsCache, now, versions);
   }
 
-  // update the cache
+  /** update the cache */
   public async fetch(): Promise<void> {
     const d = debug('fiddle-core:ElectronVersions:fetch');
     const { mtimeMs, versionsCache } = this;
@@ -365,42 +384,61 @@ export class ElectronVersions extends BaseVersions {
     }
   }
 
+  /** Getter to ensure the cache is up to date */
   public override get prereleaseMajors(): number[] {
     void this.keepFresh();
     return super.prereleaseMajors;
   }
+
+  /** Getter to ensure the cache is up to date */
   public override get stableMajors(): number[] {
     void this.keepFresh();
     return super.stableMajors;
   }
+
+  /** Getter to ensure the cache is up to date */
   public override get supportedMajors(): number[] {
     void this.keepFresh();
     return super.supportedMajors;
   }
+
+  /** Getter to ensure the cache is up to date */
   public override get obsoleteMajors(): number[] {
     void this.keepFresh();
     return super.obsoleteMajors;
   }
+
+  /** Getter to ensure the cache is up to date */
   public override get versions(): SemVer[] {
     void this.keepFresh();
     return super.versions;
   }
+
+  /** Getter to ensure the cache is up to date */
   public override get latest(): SemVer | undefined {
     void this.keepFresh();
     return super.latest;
   }
+
+  /** Getter to ensure the cache is up to date. */
   public override get latestStable(): SemVer | undefined {
     void this.keepFresh();
     return super.latestStable;
   }
+
+  /** An method to ensure the cache is up to date */
   public override isVersion(ver: SemOrStr): boolean {
     void this.keepFresh();
     return super.isVersion(ver);
   }
+
+  /** An method to ensure the cache is up to date */
   public override inMajor(major: number): SemVer[] {
     void this.keepFresh();
     return super.inMajor(major);
   }
+
+  /** An method to ensure the cache is up to date */
   public override inRange(a: SemOrStr, b: SemOrStr): SemVer[] {
     void this.keepFresh();
     return super.inRange(a, b);

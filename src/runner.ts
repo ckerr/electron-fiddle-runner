@@ -13,14 +13,15 @@ import { ElectronVersions, Versions } from './versions';
 import { Fiddle, FiddleFactory, FiddleSource } from './fiddle';
 import { DefaultPaths, Paths } from './paths';
 
+/** Represents the options for a runner */
 export interface RunnerOptions {
-  // extra arguments to be appended to the electron invocation
+  /** Extra arguments to be appended to the electron invocation */
   args?: string[];
-  // if true, use xvfb-run on *nix
+  /** if true, use xvfb-run on *nix */
   headless?: boolean;
-  // where the test's output should be written
+  /** where the test's output should be written */
   out?: Writable;
-  // whether to show config info (e.g. platform os & arch) in the log
+  /** whether to show config info (e.g. platform os & arch) in the log */
   showConfig?: boolean;
 }
 
@@ -31,17 +32,24 @@ const DefaultRunnerOpts: RunnerOptions = {
   showConfig: true,
 } as const;
 
+/** Options for spawning a runner */
 export type RunnerSpawnOptions = SpawnOptions & RunnerOptions;
 
+/** Result of a test */
 export interface TestResult {
+  /** Status of the test result */
   status: 'test_passed' | 'test_failed' | 'test_error' | 'system_error';
 }
 
+/** Result of a bisect operation */
 export interface BisectResult {
+  /** The range of values where the bisect operation succeeded */
   range?: [string, string];
+  /** The status of the bisect operation */
   status: 'bisect_succeeded' | 'test_error' | 'system_error';
 }
 
+/** Executing Electron-related tasks */
 export class Runner {
   private osInfo = '';
 
@@ -53,6 +61,7 @@ export class Runner {
     getos((err, result) => (this.osInfo = inspect(result || err)));
   }
 
+  /** Creates a new instance of the Runner class */
   public static async create(
     opts: {
       installer?: Installer;
@@ -132,6 +141,7 @@ export class Runner {
     return { exec, args };
   }
 
+  /** Spawns a child process and run a fiddle with Electron */
   public async spawn(
     versionIn: string | SemVer,
     fiddleIn: FiddleSource,
@@ -179,6 +189,7 @@ export class Runner {
     }
   }
 
+  /** Displays result */
   public static displayResult(result: TestResult): string {
     const text = Runner.displayEmoji(result);
     switch (result.status) {
@@ -193,6 +204,7 @@ export class Runner {
     }
   }
 
+  /** Runs a fiddle with a specific version of Electron and obtain the test result */
   public async run(
     version: string | SemVer,
     fiddle: FiddleSource,
@@ -213,6 +225,7 @@ export class Runner {
     });
   }
 
+  /** Bisects operation between two versions of Electron to find a regression */
   public async bisect(
     version_a: string | SemVer,
     version_b: string | SemVer,
