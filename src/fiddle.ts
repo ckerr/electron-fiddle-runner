@@ -3,7 +3,8 @@ import * as path from 'path';
 import debug from 'debug';
 import simpleGit from 'simple-git';
 import { createHash } from 'crypto';
-
+import { tmpdir } from 'os';
+import { extractAll } from '@electron/asar';
 import { DefaultPaths } from './paths';
 
 function hashString(str: string): string {
@@ -95,10 +96,26 @@ export class FiddleFactory {
     return new Fiddle(path.join(folder, 'main.js'), 'entries');
   }
 
+  public async fromASAR(source: string): Promise<Fiddle | undefined> {
+    const tempFiddleDir = await fs.mkdtemp(
+      path.join(tmpdir(), 'fiddle-asar-content'),
+    );
+    try {
+      extractAll(source, tempFiddleDir);
+      if (fs.existsSync(tempFiddleDir)) return this.fromFolder(tempFiddleDir);
+    } catch (error) {
+      // Handle unpacking errors
+      console.error('Error unpacking ASAR:', error);
+      await fs.rm(tempFiddleDir, { recursive: true });
+      throw error;
+    }
+  }
+
   public async create(src: FiddleSource): Promise<Fiddle | undefined> {
     if (src instanceof Fiddle) return src;
 
     if (typeof src === 'string') {
+      if (fs.existsSync(src) && /\.asar$/.test(src)) return this.fromASAR(src);
       if (fs.existsSync(src)) return this.fromFolder(src);
       if (/^[0-9A-Fa-f]{32}$/.test(src)) return this.fromGist(src);
       if (/^https:/.test(src) || /\.git$/.test(src)) return this.fromRepo(src);

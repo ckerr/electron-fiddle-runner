@@ -34,6 +34,7 @@
     "test:ci": "jest --runInBand --coverage"
   },
   "dependencies": {
+    "@electron/asar": "^3.2.9",
     "@electron/get": "^2.0.0",
     "debug": "^4.3.3",
     "env-paths": "^2.2.1",
